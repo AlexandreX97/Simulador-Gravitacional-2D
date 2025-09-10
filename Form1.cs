@@ -1,130 +1,107 @@
+using System;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+
 namespace SimGrav2D
 {
     public partial class Form1 : Form
     {
-       
-        // Timer responsável por atualizar a simulação
-        private Timer timerSimulacao;
+        private Universo universo;
+        private readonly Timer timer;
+        private readonly SalvarArquivosTexto saver = new SalvarArquivosTexto();
+
+        // Área "física" em metros que mapearemos para pixels
+        private readonly double worldXMin = -1.0e7;
+        private readonly double worldXMax = 1.0e7;
+        private readonly double worldYMin = -1.0e7;
+        private readonly double worldYMax = 1.0e7;
+
+        private readonly int nCorpos = 25;
+        private readonly int totalIteracoes = 5000;
 
         public Form1()
         {
-
             InitializeComponent();
+            this.DoubleBuffered = true;
 
-            // Evento para quando o Form é redimensionado
-            this.Resize += Form1_Resize;
+            // deltaT em segundos
+            double dt = 0.5;
+            universo = new Universo(dt);
+            universo.CriarAleatorio(
+                nCorpos,
+                (worldXMin, worldXMax, worldYMin, worldYMax),
+                (1.0e12, 1.0e16),          // massas "astronômicas" mas pequenas para manter estável
+                (500.0, 5000.0),           // densidades típicas rochosas
+                seed: 42
+            );
 
-            // Evento para quando o painel for redimensionado
-            panelSimulacao.Resize += panelSimulacao_Resize;
+            // Exporta configuração inicial
+            string pasta = AppDomain.CurrentDomain.BaseDirectory;
+            string cfgPath = Path.Combine(pasta, "universo_inicial.txt");
+            universo.ExportarConfiguracaoInicial(saver, cfgPath, totalIteracoes);
 
-            // Timer
-            timerSimulacao = new Timer();
-            timerSimulacao.Interval = 30; // ~33 FPS
-            timerSimulacao.Tick += TimerSimulacao_Tick;
+            // Prepara arquivo de estados
+            string estadosPath = Path.Combine(pasta, "universo_estados.txt");
+            if (File.Exists(estadosPath)) File.Delete(estadosPath);
 
-            // Desenho no painel central
-            panelSimulacao.Paint += panelSimulacao_Paint;
+            // Timer para simulação + gravação step-by-step
+            timer = new Timer();
+            timer.Interval = 16; // ~60 FPS
+            int i = 0;
+            timer.Tick += (s, e) =>
+            {
+                i++;
+                universo.Passo();
 
-            // Botões
-            btnCarregar.Click += btnCarregar_Click;
-            btnSalvar.Click += btnSalvar_Click;
-            btnIniciar.Click += btnIniciar_Click;
-            btnPausar.Click += btnPausar_Click;
+                // Grava cada iteração no arquivo de estados
+                if (i == 1)
+                {
+                    saver.IniciarArquivoEstados(estadosPath, universo.Corpos.Count, totalIteracoes, universo.DeltaT);
+                    saver.GravarEstadoIteracao(estadosPath, universo, 0);
+                }
+                else
+                {
+                    saver.GravarEstadoIteracao(estadosPath, universo, i);
+                }
 
-            // Menu
-            menuArquivoCarregar.Click += menuArquivoCarregar_Click;
-            menuArquivoSalvar.Click += menuArquivoSalvar_Click;
-            menuArquivoSair.Click += menuArquivoSair_Click;
-            menuSimulacaoIniciar.Click += menuSimulacaoIniciar_Click;
-            menuSimulacaoPausar.Click += menuSimulacaoPausar_Click;
+                Invalidate(); // repintar
+                if (i >= totalIteracoes)
+                {
+                    timer.Stop();
+                }
+            };
+            timer.Start();
         }
 
-        // Quando o formulário muda de tamanho
-        private void Form1_Resize(object sender, EventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            panelSimulacao.Invalidate(); // força redesenho
-        }
+            base.OnPaint(e);
+            var g = e.Graphics;
+            g.Clear(Color.Black);
 
-        // Quando o painel muda de tamanho
-        private void panelSimulacao_Resize(object sender, EventArgs e)
-        {
-            panelSimulacao.Invalidate(); // força redesenho
-        }
+            // Mapeamento simples mundo->tela
+            float W = ClientSize.Width;
+            float H = ClientSize.Height;
+            float pad = 20f;
 
-        // Desenho
-        private void panelSimulacao_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
+            foreach (var c in universo.Corpos)
+            {
+                // Normaliza posição para [0..1]
+                double nx = (c.PosX - worldXMin) / (worldXMax - worldXMin);
+                double ny = (c.PosY - worldYMin) / (worldYMax - worldYMin);
 
-            // Exemplo: desenha um corpo no centro
-            int x = panelSimulacao.Width / 2;
-            int y = panelSimulacao.Height / 2;
-            int raio = 20;
+                float px = (float)(pad + nx * (W - 2 * pad));
+                float py = (float)(pad + (1.0 - ny) * (H - 2 * pad)); // inverte Y para desenho
 
-            g.FillEllipse(Brushes.White, x - raio, y - raio, raio * 2, raio * 2);
+                // Escala do raio para pixels (apenas para visualização)
+                double maxWorldRadius = (worldXMax - worldXMin) * 0.02;
+                float pr = (float)Math.Max(2.0, Math.Min(30.0, c.Raio / maxWorldRadius * (W - 2 * pad)));
 
-            // Futuramente: desenhar os corpos da simulação
-        }
-
-        private void TimerSimulacao_Tick(object sender, EventArgs e)
-        {
-            // Atualiza posições da simulação 
-
-            panelSimulacao.Invalidate(); // força redesenho
-        }
-
-        private void btnCarregar_Click(object sender, EventArgs e)
-        {
-            // carregar configuração
-        }
-
-        private void btnSalvar_Click(object sender, EventArgs e)
-        {
-            // implementar salvar
-        }
-
-        private void btnIniciar_Click(object sender, EventArgs e)
-        {
-            timerSimulacao.Start(); // Inicia simulação
-        }
-
-        private void btnPausar_Click(object sender, EventArgs e)
-        {
-            timerSimulacao.Stop(); // Pausa simulação
-        }
-
-        // Menu de Arquivo
-        private void menuArquivoCarregar_Click(object sender, EventArgs e)
-        {
-            btnCarregar_Click(sender, e);
-        }
-
-        private void menuArquivoSalvar_Click(object sender, EventArgs e)
-        {
-            btnSalvar_Click(sender, e);
-        }
-
-        private void menuArquivoSair_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        // Menu de Simulação
-        private void menuSimulacaoIniciar_Click(object sender, EventArgs e)
-        {
-            btnIniciar_Click(sender, e);
-        }
-
-        private void menuSimulacaoPausar_Click(object sender, EventArgs e)
-        {
-            btnPausar_Click(sender, e);
-        }
-
-        // Status Bar
-        private void statusInfo_Click(object sender, EventArgs e)
-        {
-            // Exemplo de atualização de status
-
+                // Desenha círculo
+                using var brush = new SolidBrush(Color.White);
+                g.FillEllipse(brush, px - pr, py - pr, pr * 2, pr * 2);
+            }
         }
     }
 }

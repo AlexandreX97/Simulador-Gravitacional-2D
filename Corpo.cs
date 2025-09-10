@@ -1,78 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimGrav2D
 {
-    internal class Corpo
+    public class Corpo
     {
-        private String nome;
-        private double massa;
-        private double densidade;
-        private double posX;
-        private double posY;
-        private double velX;
-        private double velY;
+        // Nome do corpo
+        public string Nome { get; set; }
 
-        //Construtor
-        public Corpo(string nome, double massa, double densidade, double posX, double posY, double velX, double velY)
+        // Massa em kg
+        public double Massa { get; set; }
+
+        // Densidade em kg/m^3
+        public double Densidade { get; set; }
+
+        // Posição (m)
+        public double PosX { get; set; }
+        public double PosY { get; set; }
+
+        // Velocidade (m/s)
+        public double VelX { get; set; }
+        public double VelY { get; set; }
+
+        // Raio calculado em metros (a partir de massa e densidade)
+        public double Raio { get; private set; }
+
+        // Construtor principal
+        public Corpo(string nome, double massa, double densidade, double posX, double posY, double velX = 0, double velY = 0)
         {
-            this.nome = nome;
-            this.massa = massa;
-            this.densidade = densidade;
-            this.posX = posX;
-            this.posY = posY;
-            this.velX = velX;
-            this.velY = velY;
+            Nome = nome;
+            Massa = massa;
+            Densidade = densidade;
+            PosX = posX;
+            PosY = posY;
+            VelX = velX;
+            VelY = velY;
+            AtualizarRaio();
         }
 
-        //Métodos GET e Set
-        public string Nome
+        // Atualiza o raio de acordo com a massa e densidade: r = cube_root(3m / (4πρ))
+        public void AtualizarRaio()
         {
-            get { return nome; }
-            set { nome = value; }
+            if (Densidade <= 0) Densidade = 1.0; // proteção mínima
+            Raio = Math.Pow((3.0 * Massa) / (4.0 * Math.PI * Densidade), 1.0 / 3.0);
         }
 
-        public double Massa
+        // Retorna o volume (m^3) assumindo esfera
+        public double Volume()
         {
-            get { return massa; }
-            set { massa = value; }
+            return (4.0 / 3.0) * Math.PI * Math.Pow(Raio, 3);
         }
-
-        public double Densidade
-        {
-            get { return densidade; }
-            set { densidade = value; }
-        }
-
-        public double PosX
-        {
-            get { return posX; }
-            set { posX = value; }
-        }
-
-        public double PosY
-        {
-            get { return posY; }
-            set { posY = value; }
-        }
-
-        public double VelX
-        {
-            get { return velX; }
-            set { velX = value; }
-        }
-
-        public double VelY
-        {
-            get { return velY; }
-            set { velY = value; }
-        }
-
-
-
-
     }
 }

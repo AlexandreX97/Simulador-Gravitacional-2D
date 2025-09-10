@@ -2,15 +2,8 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -19,6 +12,8 @@
             }
             base.Dispose(disposing);
         }
+
+        #region Windows Form Designer generated code
 
         private void InitializeComponent()
         {
@@ -56,7 +51,6 @@
             menuStripPrincipal.Size = new Size(800, 24);
             menuStripPrincipal.TabIndex = 0;
             menuStripPrincipal.Text = "menuStrip1";
-            //menuStripPrincipal.ItemClicked += menuStrip1_ItemClicked;
             // 
             // menuArquivo
             // 
@@ -68,19 +62,19 @@
             // menuArquivoCarregar
             // 
             menuArquivoCarregar.Name = "menuArquivoCarregar";
-            menuArquivoCarregar.Size = new Size(180, 22);
+            menuArquivoCarregar.Size = new Size(143, 22);
             menuArquivoCarregar.Text = "Carregar";
             // 
             // menuArquivoSalvar
             // 
             menuArquivoSalvar.Name = "menuArquivoSalvar";
-            menuArquivoSalvar.Size = new Size(180, 22);
+            menuArquivoSalvar.Size = new Size(143, 22);
             menuArquivoSalvar.Text = "Salvar Estado";
             // 
             // menuArquivoSair
             // 
             menuArquivoSair.Name = "menuArquivoSair";
-            menuArquivoSair.Size = new Size(180, 22);
+            menuArquivoSair.Size = new Size(143, 22);
             menuArquivoSair.Text = "Sair";
             // 
             // menuSimulacao
@@ -93,20 +87,19 @@
             // menuSimulacaoIniciar
             // 
             menuSimulacaoIniciar.Name = "menuSimulacaoIniciar";
-            menuSimulacaoIniciar.Size = new Size(180, 22);
+            menuSimulacaoIniciar.Size = new Size(119, 22);
             menuSimulacaoIniciar.Text = "Iniciar";
-            // menuSimulacaoIniciar.Click += iniciarToolStripMenuItem_Click;
             // 
             // menuSimulacaoPausar
             // 
             menuSimulacaoPausar.Name = "menuSimulacaoPausar";
-            menuSimulacaoPausar.Size = new Size(180, 22);
+            menuSimulacaoPausar.Size = new Size(119, 22);
             menuSimulacaoPausar.Text = "Pausar";
             // 
             // menuSimulacaoReiniciar
             // 
             menuSimulacaoReiniciar.Name = "menuSimulacaoReiniciar";
-            menuSimulacaoReiniciar.Size = new Size(180, 22);
+            menuSimulacaoReiniciar.Size = new Size(119, 22);
             menuSimulacaoReiniciar.Text = "Reiniciar";
             // 
             // menuExibicao
@@ -119,13 +112,13 @@
             // menuExibicaoTrajetorias
             // 
             menuExibicaoTrajetorias.Name = "menuExibicaoTrajetorias";
-            menuExibicaoTrajetorias.Size = new Size(180, 22);
+            menuExibicaoTrajetorias.Size = new Size(171, 22);
             menuExibicaoTrajetorias.Text = "Mostrar Trajetórias";
             // 
             // menuExibicaoVetores
             // 
             menuExibicaoVetores.Name = "menuExibicaoVetores";
-            menuExibicaoVetores.Size = new Size(180, 22);
+            menuExibicaoVetores.Size = new Size(171, 22);
             menuExibicaoVetores.Text = "Mostrar Vetores";
             // 
             // panelLateral
@@ -195,7 +188,6 @@
             statusInfo.Name = "statusInfo";
             statusInfo.Size = new Size(119, 17);
             statusInfo.Text = "Corpos: 0 | Tempo: 0s";
-            // statusInfo.Click += toolStripStatusLabel1_Click;
             // 
             // panelSimulacao
             // 
@@ -227,7 +219,7 @@
             PerformLayout();
         }
 
-#endregion
+        #endregion
 
         private MenuStrip menuStripPrincipal;
         private ToolStripMenuItem menuArquivo;
@@ -249,20 +241,6 @@
         private StatusStrip statusPrincipal;
         private ToolStripStatusLabel statusInfo;
         private Panel panelSimulacao; // <- corrigido
-        #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
-        }
-
-        #endregion
     }
 }
