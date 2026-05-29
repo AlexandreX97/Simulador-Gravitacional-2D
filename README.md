@@ -1,1 +1,17 @@
-Simulador Gravitacional 2D desenvolvido em C# no Visual Studio e utilizando Forms para a obtenção de parâmetros, e salvando os dados no MySQL.
+Simulador Gravitacional 2D utilizando Forms e desenvolvido para a discilplina de Programação Avançada de Sistemas. 
+
+-----------------------------------------------------------------------------------------------
+
+- Linguagens:
+
+C#;
+
+SQL.
+
+-----------------------------------------------------------------------------------------------
+
+- IDEs
+
+Visual Studio;
+
+MySQL.
