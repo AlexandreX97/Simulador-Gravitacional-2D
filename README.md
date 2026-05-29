@@ -14,4 +14,4 @@ SQL.
 
 Visual Studio;
 
-MySQL.
+MySQL Workbench.
